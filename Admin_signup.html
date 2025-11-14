@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B3LAMS — Admin Signup</title>
+<style>
+:root{--gold:#ffd86b;--bg:#070707;--card:#0f0f12}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
+.card{width:420px;padding:22px;border-radius:12px;background:var(--card);border:1px solid rgba(255,216,107,0.04)}
+h1{margin:0 0 12px;color:var(--gold);text-align:center}
+input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #222;background:#0d0d0d;color:#fff}
+button{width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--gold),#f3a847);color:#111;font-weight:700;cursor:pointer}
+.small{color:#c9b777;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>B3LAMS — Admin Signup</h1>
+    <input id="name" placeholder="Full name" />
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password (min 8 chars, 1 uppercase, 2 digits, 1 special)" />
+    <input id="secret" placeholder="Admin secret key" />
+    <button onclick="doSignup()">Create Admin</button>
+    <p class="small">Already an admin? <a href="index.html" style="color:var(--gold)">Login</a></p>
+  </div>
+
+<script>
+const ADMIN_SECRET = 'B3LAMS-SECRET-2025';
+function validPassword(p){
+  if(!p || p.length < 8) return false;
+  if(!/[A-Z]/.test(p)) return false;
+  if((p.match(/\d/g)||[]).length < 2) return false;
+  if(!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p)) return false;
+  return true;
+}
+function doSignup(){
+  const n=document.getElementById('name').value.trim();
+  const e=document.getElementById('email').value.trim();
+  const p=document.getElementById('password').value;
+  const s=document.getElementById('secret').value.trim();
+  if(!n||!e||!p||!s){ alert('All fields required'); return; }
+  if(s !== ADMIN_SECRET){ alert('Invalid admin secret key'); return; }
+  if(!validPassword(p)){ alert('Password must be ≥8 chars, include 1 uppercase, 2 digits and 1 special char'); return; }
+  let admins = JSON.parse(localStorage.getItem('b3_admins')||'[]');
+  if(admins.find(a=>a.email.toLowerCase()===e.toLowerCase())){ alert('Admin exists'); return; }
+  const adm = { id:'adm_'+Date.now(), name:n, email:e, password:p, created:new Date().toISOString() };
+  admins.push(adm);
+  localStorage.setItem('b3_admins', JSON.stringify(admins));
+  alert('Admin created. Login now.');
+  location.href='index.html';
+}
+</script>
+</body>
+</html>

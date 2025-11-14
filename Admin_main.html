@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B3LAMS — Admin Dashboard</title>
+<style>
+:root{--gold:#ffd86b;--bg:#070707;--card:#0f0f12}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{margin:0;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
+header{background:#101010;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,216,107,0.04)}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{font-weight:800;color:var(--gold);font-size:1.1rem}
+.sub{color:#c9b777;font-size:13px}
+.container{max-width:1200px;margin:20px auto;padding:14px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+.card{background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,216,107,0.04)}
+input,select,textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #222;background:#0d0d0d;color:#fff}
+button{padding:10px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--gold),#f3a847);color:#111;font-weight:700;cursor:pointer}
+.list-item{display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.img-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px}
+.small{color:#c9b777;font-size:13px}
+.controls{display:flex;gap:8px}
+.table{width:100%;border-collapse:collapse}
+.table td,.table th{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="logo">B3LAMS</div>
+    <div>
+      <div style="font-weight:700">BHARATH ECOMMERCE LARGEST MEGA SHOP</div>
+      <div class="sub">Dark • Gold theme • Single-file frontend</div>
+    </div>
+  </div>
+  <div>
+    <button onclick="gotoBuyer()">Open Buyer App</button>
+    <button onclick="goProfile()">Profile</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h3>Add / Edit Product</h3>
+        <input id="pid" type="hidden">
+        <input id="pname" placeholder="Product name">
+        <input id="pprice" placeholder="Price (numeric)">
+        <input id="pcat" placeholder="Category (Mobiles, Fashion, Electronics...)">
+        <input id="plink" placeholder="External buy link (amazon/flipkart/meesho)">
+        <input id="pimageurl" placeholder="Image URL (optional)">
+        <div style="margin:8px 0">
+          <label class="small">Or upload multiple images:</label>
+          <input id="pfiles" type="file" accept="image/*" multiple>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button onclick="saveProduct()">Save Product</button>
+          <button onclick="clearForm()" style="background:#333;color:#fff">Clear</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3>Products</h3>
+        <div id="productsList"></div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Buyers</h3>
+        <div id="buyersList" style="max-height:300px;overflow:auto"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3>Orders</h3>
+        <div id="ordersList" style="max-height:240px;overflow:auto"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const KEY_PRODUCTS='b3_products';
+const KEY_BUYERS='b3_buyers';
+const KEY_ORDERS='b3_orders';
+const KEY_ADMIN_CUR='b3_currentAdmin';
+
+(function init(){
+  const cur = JSON.parse(localStorage.getItem(KEY_ADMIN_CUR)||'null');
+  if(!cur){ alert('Not logged in as admin'); location.href='index.html'; return; }
+  renderProducts();
+  renderBuyers();
+  renderOrders();
+})();
+
+function getProducts(){ return JSON.parse(localStorage.getItem(KEY_PRODUCTS)||'[]'); }
+function setProducts(p){ localStorage.setItem(KEY_PRODUCTS, JSON.stringify(p)); window.dispatchEvent(new Event('storage')); }
+
+async function readFilesAsBase64(files){
+  const arr = [];
+  for(const f of files){
+    const data = await new Promise(res=>{
+      const fr = new FileReader();
+      fr.onload = e => res(e.target.result);
+      fr.readAsDataURL(f);
+    });
+    arr.push(data);
+  }
+  return arr;
+}
+
+async function saveProduct(){
+  const id = document.getElementById('pid').value;
+  const name = document.getElementById('pname').value.trim();
+  const price = Number(document.getElementById('pprice').value.trim());
+  const cat = document.getElementById('pcat').value.trim() || 'Misc';
+  const link = document.getElementById('plink').value.trim() || '#';
+  const url = document.getElementById('pimageurl').value.trim();
+  const files = document.getElementById('pfiles').files;
+  if(!name || !price){ alert('Name and price required'); return; }
+  let prods = getProducts();
+  let images = [];
+  if(url) images.push(url);
+  if(files && files.length){ const base64s = await readFilesAsBase64(files); images = images.concat(base64s); }
+  if(id){
+    const idx = prods.findIndex(p=>p.id==id);
+    if(idx>-1){
+      prods[idx] = { ...prods[idx], name, price, category:cat, link, images: images.length?images:prods[idx].images||[] };
+    }
+  } else {
+    prods.push({ id: Date.now(), name, price, category:cat, link, images: images.length?images:['https://via.placeholder.com/800x600?text='+encodeURIComponent(name)], created:new Date().toISOString() });
+  }
+  setProducts(prods);
+  clearForm();
+  renderProducts();
+  alert('Product saved');
+}
+
+function renderProducts(){
+  const prods = getProducts();
+  const el = document.getElementById('productsList'); el.innerHTML = '';
+  if(!prods.length){ el.innerHTML = '<p class="small">No products yet</p>'; return; }
+  prods.slice().reverse().forEach(p=>{
+    const img = (p.images && p.images.length)?p.images[0]:'https://via.placeholder.com/160';
+    const box = document.createElement('div'); box.className='list-item';
+    box.innerHTML = `<img src="${img}" class="img-thumb"><div style="flex:1"><strong>${p.name}</strong><div class="small">₹${p.price} · ${p.category}</div></div>
+      <div class="controls">
+        <button onclick="editProduct(${p.id})">Edit</button>
+        <button onclick="deleteProduct(${p.id})" style="background:#b83d3d;color:#fff">Delete</button>
+      </div>`;
+    el.appendChild(box);
+  });
+}
+
+function editProduct(id){
+  const p = getProducts().find(x=>x.id==id); if(!p) return;
+  document.getElementById('pid').value = p.id;
+  document.getElementById('pname').value = p.name;
+  document.getElementById('pprice').value = p.price;
+  document.getElementById('pcat').value = p.category;
+  document.getElementById('plink').value = p.link || '';
+  document.getElementById('pimageurl').value = (p.images && p.images[0]) || '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteProduct(id){ if(!confirm('Delete product?')) return; const prods = getProducts().filter(x=>x.id!=id); setProducts(prods); renderProducts(); }
+
+function clearForm(){
+  document.getElementById('pid').value=''; document.getElementById('pname').value=''; document.getElementById('pprice').value=''; document.getElementById('pcat').value=''; document.getElementById('plink').value=''; document.getElementById('pimageurl').value=''; document.getElementById('pfiles').value='';
+}
+
+/* Buyers & Orders */
+function renderBuyers(){
+  const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS)||'[]');
+  const el = document.getElementById('buyersList');
+  if(!buyers.length){ el.innerHTML = '<p class="small">No buyers yet</p>'; return; }
+  el.innerHTML = buyers.slice().reverse().map(b=>`<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${b.name}</strong> <div class="small">${b.email} · ${b.phone||'—'}</div><div style="margin-top:6px"><button onclick="viewBuyer('${b.id}')">View</button></div></div>`).join('');
+}
+function viewBuyer(id){
+  const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS)||'[]');
+  const b = buyers.find(x=>x.id===id);
+  if(!b) return alert('Buyer not found');
+  alert(`Buyer: ${b.name}\nEmail: ${b.email}\nPhone: ${b.phone}\nAddress: ${b.address||'—'}\nOrders: ${(b.orders||[]).length}\nReferral: ${b.ref || '—'}`);
+}
+
+function renderOrders(){
+  const orders = JSON.parse(localStorage.getItem(KEY_ORDERS)||'[]');
+  const el = document.getElementById('ordersList');
+  if(!orders.length){ el.innerHTML = '<p class="small">No orders yet</p>'; return; }
+  el.innerHTML = orders.slice().reverse().map(o=>`<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>Order ${o.id}</strong><div class="small">${new Date(o.date).toLocaleString()}</div><div>Items: ${o.items.map(i=>i.title).join(', ')}</div><div class="small">Buyer: ${o.buyerName} (${o.buyerEmail})</div></div>`).join('');
+}
+
+/* profile, logout */
+function goProfile(){
+  const adm = JSON.parse(localStorage.getItem(KEY_ADMIN_CUR)||'null');
+  if(!adm) return alert('Not logged in'); 
+  const newName = prompt('Change display name', adm.name);
+  if(newName){ adm.name = newName; const admins = JSON.parse(localStorage.getItem('b3_admins')||'[]'); const idx = admins.findIndex(a=>a.id===adm.id); if(idx>-1){ admins[idx]=adm; localStorage.setItem('b3_admins', JSON.stringify(admins)); } localStorage.setItem(KEY_ADMIN_CUR, JSON.stringify(adm)); alert('Saved'); }
+}
+function logout(){ localStorage.removeItem(KEY_ADMIN_CUR); alert('Logged out'); location.href='index.html'; }
+function gotoBuyer(){ window.open('buyer.html','_self'); }
+
+/* storage listener */
+window.addEventListener('storage', e => {
+  if(e.key === KEY_PRODUCTS) renderProducts();
+  if(e.key === KEY_BUYERS) renderBuyers();
+  if(e.key === KEY_ORDERS) renderOrders();
+});
+</script>
+</body>
+</html>

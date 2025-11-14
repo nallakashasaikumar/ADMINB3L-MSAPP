@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B3LAMS — Admin Login</title>
+<style>
+:root{--gold:#ffd86b;--card:#0f0f12}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
+.card{width:420px;padding:22px;border-radius:12px;background:var(--card);border:1px solid rgba(255,216,107,0.04)}
+h1{color:var(--gold);text-align:center;margin-bottom:12px}
+input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #222;background:#0d0d0d;color:#fff}
+button{width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--gold),#f3a847);color:#111;font-weight:700}
+.small{color:#c9b777;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Admin Login</h1>
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="doLogin()">Login</button>
+    <p class="small"><a href="Admin_signup.html" style="color:var(--gold)">Create account</a> • <a href="#" onclick="forgot()">Forgot</a></p>
+  </div>
+
+<script>
+function doLogin(){
+  const e=document.getElementById('email').value.trim();
+  const p=document.getElementById('password').value;
+  if(!e||!p){ alert('Enter credentials'); return; }
+  const admins = JSON.parse(localStorage.getItem('b3_admins')||'[]');
+  const adm = admins.find(a => a.email.toLowerCase()===e.toLowerCase() && a.password === p);
+  if(!adm){ alert('Invalid credentials'); return; }
+  localStorage.setItem('b3_currentAdmin', JSON.stringify(adm));
+  alert('Logged in — redirecting to Admin Dashboard');
+  location.href = 'Admin_main.html';
+}
+function forgot(){
+  const email = prompt('Enter admin email for OTP (demo):');
+  if(!email) return;
+  const admins = JSON.parse(localStorage.getItem('b3_admins')||'[]');
+  const adm = admins.find(x=>x.email.toLowerCase()===email.toLowerCase());
+  if(!adm) return alert('No admin found');
+  const otp = Math.floor(100000+Math.random()*900000).toString();
+  sessionStorage.setItem('b3_admin_otp', otp);
+  alert('Demo OTP: '+otp);
+  const input = prompt('Enter OTP');
+  if(input !== otp) return alert('Invalid OTP');
+  const np = prompt('Enter new password (min 8 chars, 1 uppercase, 2 digits, 1 special)');
+  if(!np) return;
+  // validate
+  if(!(/.{8,}/.test(np) && /[A-Z]/.test(np) && (np.match(/\d/g)||[]).length>=2 && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(np))) return alert('Password not strong');
+  adm.password = np;
+  localStorage.setItem('b3_admins', JSON.stringify(admins));
+  alert('Password reset');
+}
+</script>
+</body>
+</html>
