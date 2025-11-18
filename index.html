@@ -90,7 +90,7 @@ const KEY_ADMIN_CUR='b3_currentAdmin';
 
 (function init(){
   const cur = JSON.parse(localStorage.getItem(KEY_ADMIN_CUR)||'null');
-  if(!cur){ alert('Not logged in as admin'); location.href='index.html'; return; }
+  if(!cur){ alert('Not logged in as admin'); location.href='Admin_login.html'; return; }
   renderProducts();
   renderBuyers();
   renderOrders();
@@ -199,7 +199,7 @@ function goProfile(){
   const newName = prompt('Change display name', adm.name);
   if(newName){ adm.name = newName; const admins = JSON.parse(localStorage.getItem('b3_admins')||'[]'); const idx = admins.findIndex(a=>a.id===adm.id); if(idx>-1){ admins[idx]=adm; localStorage.setItem('b3_admins', JSON.stringify(admins)); } localStorage.setItem(KEY_ADMIN_CUR, JSON.stringify(adm)); alert('Saved'); }
 }
-function logout(){ localStorage.removeItem(KEY_ADMIN_CUR); alert('Logged out'); location.href='index.html'; }
+function logout(){ localStorage.removeItem(KEY_ADMIN_CUR); alert('Logged out'); location.href='Admin_login.html'; }
 function gotoBuyer(){ window.open('buyer.html','_self'); }
 
 /* storage listener */
@@ -211,3 +211,4 @@ window.addEventListener('storage', e => {
 </script>
 </body>
 </html>
+
