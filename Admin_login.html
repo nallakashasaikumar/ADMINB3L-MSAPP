@@ -33,7 +33,7 @@ function doLogin(){
   if(!adm){ alert('Invalid credentials'); return; }
   localStorage.setItem('b3_currentAdmin', JSON.stringify(adm));
   alert('Logged in — redirecting to Admin Dashboard');
-  location.href = 'Admin_main.html';
+  location.href = 'index.html';
 }
 function forgot(){
   const email = prompt('Enter admin email for OTP (demo):');
@@ -57,3 +57,4 @@ function forgot(){
 </script>
 </body>
 </html>
+
