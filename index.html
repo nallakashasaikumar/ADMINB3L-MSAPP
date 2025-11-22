@@ -1,214 +1,585 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>B3LAMS — Admin Dashboard</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B3LAMS — Admin Dashboard (Frontend Only)</title>
 <style>
-:root{--gold:#ffd86b;--bg:#070707;--card:#0f0f12}
+:root{
+  --gold:#ffd86b; --bg:#070707; --card:#0f0f12; --muted:#b5a96d;
+}
 *{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
-body{margin:0;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
-header{background:#101010;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,216,107,0.04)}
-.header-left{display:flex;align-items:center;gap:12px}
-.logo{font-weight:800;color:var(--gold);font-size:1.1rem}
-.sub{color:#c9b777;font-size:13px}
-.container{max-width:1200px;margin:20px auto;padding:14px}
-.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-.card{background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,216,107,0.04)}
+html,body{height:100%}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#050505,#0b0b0b);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Header */
+header{
+  background:#0f0f11;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(255,216,107,0.04);
+  gap:12px;
+}
+.header-left{display:flex;gap:12px;align-items:center}
+.logo{font-weight:800;color:var(--gold);font-size:1.05rem}
+.sub{color:var(--muted);font-size:13px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--gold),#f3a847);color:#111;font-weight:700;cursor:pointer}
+.link-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+.badge{background:rgba(0,0,0,0.35);padding:6px 8px;border-radius:8px;color:var(--gold);font-weight:600}
+
+/* Layout */
+.main-wrap{max-width:1200px;margin:16px auto;padding:12px;width:100%;flex:1;display:grid;grid-template-columns:1fr 320px;gap:16px}
+@media(max-width:980px){.main-wrap{grid-template-columns:1fr}}
+
+/* Top dashboard cards (A) */
+.cards{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);flex:1;min-width:140px
+}
+.card h4{margin:0;font-size:14px;color:var(--muted)}
+.card p{margin:8px 0 0;font-weight:800;font-size:20px;color:var(--gold)}
+
+/* Left column: forms + lists */
+.left-col .card{margin-bottom:12px}
+
+/* product list */
+.list-item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.img-thumb{width:70px;height:70px;border-radius:8px;object-fit:cover}
+.controls{display:flex;gap:6px}
+
+/* right sidebar (B) */
+.sidebar .card{margin-bottom:12px}
+.scroll{max-height:300px;overflow:auto;padding-right:6px}
+
+/* tabs (C) */
+.tabs{display:flex;gap:8px;margin:10px 0}
+.tab{padding:8px 10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+.tab.active{background:#111;border:1px solid rgba(255,216,107,0.14);color:var(--gold)}
+
+/* forms */
 input,select,textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #222;background:#0d0d0d;color:#fff}
-button{padding:10px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--gold),#f3a847);color:#111;font-weight:700;cursor:pointer}
-.list-item{display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)}
-.img-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px}
-.small{color:#c9b777;font-size:13px}
-.controls{display:flex;gap:8px}
-.table{width:100%;border-collapse:collapse}
-.table td,.table th{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
+small.kv{color:var(--muted);font-size:13px}
+
+/* table like */
+.row{display:flex;gap:8px;align-items:center}
+.row .col{flex:1}
+
+/* footer */
+.footer{padding:12px;text-align:center;color:var(--muted);font-size:13px;margin-top:auto}
+
+/* small screens */
+@media(max-width:480px){
+  .img-thumb{width:56px;height:56px}
+  .card p{font-size:18px}
+}
+.status-pill{padding:6px 8px;border-radius:999px;font-weight:700;background:rgba(255,255,255,0.02);color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+.status-active{color:#0f0;background:rgba(15,255,15,0.06)}
+.status-inactive{color:#ff5c5c;background:rgba(255,92,92,0.06)}
+.blocked{color:#ff9b9b}
 </style>
 </head>
 <body>
+
 <header>
   <div class="header-left">
     <div class="logo">B3LAMS</div>
     <div>
-      <div style="font-weight:700">BHARATH ECOMMERCE LARGEST MEGA SHOP</div>
-      <div class="sub">Dark • Gold theme • Single-file frontend</div>
+      <div style="font-weight:700">BHARATH ECOMMERCE LARGEST MEGA SHOP — Admin</div>
+      <div class="sub">Frontend-only admin — localStorage sync with Buyer</div>
     </div>
   </div>
-  <div>
-    <button onclick="gotoBuyer()">Open Buyer App</button>
-    <button onclick="goProfile()">Profile</button>
-    <button onclick="logout()">Logout</button>
+
+  <div class="header-actions">
+    <div class="badge" id="adminNameBadge">Admin</div>
+    <button class="link-btn" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="link-btn" onclick="showTab('products')">Products</button>
+    <button class="link-btn" onclick="showTab('buyers')">Buyers</button>
+    <button class="link-btn" onclick="showTab('orders')">Orders</button>
+    <button class="btn" onclick="gotoBuyer()">Open Buyer App</button>
+    <button class="link-btn" onclick="logout()">Logout</button>
   </div>
 </header>
 
-<div class="container">
-  <div class="grid">
-    <div>
-      <div class="card">
-        <h3>Add / Edit Product</h3>
-        <input id="pid" type="hidden">
-        <input id="pname" placeholder="Product name">
-        <input id="pprice" placeholder="Price (numeric)">
-        <input id="pcat" placeholder="Category (Mobiles, Fashion, Electronics...)">
-        <input id="plink" placeholder="External buy link (amazon/flipkart/meesho)">
-        <input id="pimageurl" placeholder="Image URL (optional)">
-        <div style="margin:8px 0">
-          <label class="small">Or upload multiple images:</label>
-          <input id="pfiles" type="file" accept="image/*" multiple>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button onclick="saveProduct()">Save Product</button>
-          <button onclick="clearForm()" style="background:#333;color:#fff">Clear</button>
-        </div>
-      </div>
+<main class="main-wrap">
+  <!-- LEFT -->
+  <div class="left-col">
 
-      <div class="card" style="margin-top:14px">
-        <h3>Products</h3>
-        <div id="productsList"></div>
+    <!-- TOP CARDS (A) -->
+    <div id="topCards" class="cards" aria-hidden="false">
+      <div class="card"><h4>Total products</h4><p id="cntProducts">0</p></div>
+      <div class="card"><h4>Total buyers</h4><p id="cntBuyers">0</p></div>
+      <div class="card"><h4>Total orders</h4><p id="cntOrders">0</p></div>
+    </div>
+
+    <!-- TABS (C) -->
+    <div class="tabs" role="tablist">
+      <div class="tab active" id="tab-products" onclick="showTab('products')">Products</div>
+      <div class="tab" id="tab-buyers" onclick="showTab('buyers')">Buyers</div>
+      <div class="tab" id="tab-orders" onclick="showTab('orders')">Orders</div>
+      <div class="tab" id="tab-dashboard" onclick="showTab('dashboard')">Dashboard Page</div>
+    </div>
+
+    <!-- PRODUCT FORM -->
+    <section id="section-products" class="card" style="display:block">
+      <h3 id="formTitle">Add / Edit Product</h3>
+      <input id="pid" type="hidden">
+      <input id="pname" placeholder="Product name">
+      <input id="pprice" placeholder="Price (numeric)" type="number" min="0">
+      <input id="pcat" placeholder="Category (Mobiles, Fashion, Electronics...)">
+      <input id="plink" placeholder="External buy link (optional)">
+      <input id="pimageurl" placeholder="Image URL (optional)">
+      <div style="margin:6px 0">
+        <label class="kv">Or upload images:</label>
+        <input id="pfiles" type="file" accept="image/*" multiple>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label class="kv">Status:</label>
+        <select id="pstatus">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <label class="kv">Stock:</label>
+        <input id="pstock" type="number" value="100" style="width:120px">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" id="saveBtn" onclick="saveProduct()">Save Product</button>
+        <button class="link-btn" onclick="clearForm()">Clear</button>
+      </div>
+    </section>
+
+    <!-- PRODUCTS LIST -->
+    <section id="section-products-list" class="card" style="margin-top:12px">
+      <h3>Products <small class="kv" id="productCountInfo"></small></h3>
+      <div id="productsList" class="scroll"></div>
+    </section>
+
+    <!-- BUYERS LIST -->
+    <section id="section-buyers" class="card hidden" style="display:none;margin-top:12px">
+      <h3>Buyers</h3>
+      <div id="buyersList" class="scroll"></div>
+    </section>
+
+    <!-- ORDERS LIST -->
+    <section id="section-orders" class="card hidden" style="display:none;margin-top:12px">
+      <h3>Orders</h3>
+      <div id="ordersList" class="scroll"></div>
+    </section>
+
+  </div>
+
+  <!-- RIGHT SIDEBAR (B) -->
+  <aside class="sidebar">
+    <div class="card">
+      <h4>Quick Stats</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div><strong>Products:</strong> <span id="statProducts">0</span></div>
+        <div><strong>Active:</strong> <span id="statActive">0</span></div>
+        <div><strong>Inactive:</strong> <span id="statInactive">0</span></div>
+        <div><strong>Buyers:</strong> <span id="statBuyers">0</span></div>
+        <div><strong>Orders:</strong> <span id="statOrders">0</span></div>
       </div>
     </div>
 
-    <aside>
-      <div class="card">
-        <h3>Buyers</h3>
-        <div id="buyersList" style="max-height:300px;overflow:auto"></div>
-      </div>
+    <div class="card">
+      <h4>Recent Orders</h4>
+      <div id="recentOrders" class="scroll"></div>
+    </div>
 
-      <div class="card" style="margin-top:14px">
-        <h3>Orders</h3>
-        <div id="ordersList" style="max-height:240px;overflow:auto"></div>
+    <div class="card">
+      <h4>Actions</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="exportData()">Export JSON</button>
+        <button onclick="importPrompt()">Import JSON</button>
+        <button onclick="clearAllData()" style="background:#b83d3d;color:#fff">Clear All (danger)</button>
       </div>
-    </aside>
-  </div>
-</div>
+    </div>
+  </aside>
+</main>
+
+<div class="footer">© 2025 B3LAMS — Admin (frontend only). Data stored in browser localStorage; Buyer app reads same keys.</div>
 
 <script>
-const KEY_PRODUCTS='b3_products';
-const KEY_BUYERS='b3_buyers';
-const KEY_ORDERS='b3_orders';
-const KEY_ADMIN_CUR='b3_currentAdmin';
+/* Frontend Admin-only system (localStorage only)
+   Keys:
+     - b3_products  (array of product objects)
+     - b3_buyers    (array of buyers)
+     - b3_orders    (array of orders)
+     - b3_currentAdmin  (admin session object)
+*/
 
-(function init(){
-  const cur = JSON.parse(localStorage.getItem(KEY_ADMIN_CUR)||'null');
-  if(!cur){ alert('Not logged in as admin'); location.href='Admin_login.html'; return; }
-  renderProducts();
-  renderBuyers();
-  renderOrders();
-})();
+/* ---- Utilities ---- */
+const KEY_PRODUCTS = 'b3_products';
+const KEY_BUYERS = 'b3_buyers';
+const KEY_ORDERS = 'b3_orders';
+const KEY_ADMIN = 'b3_currentAdmin';
 
-function getProducts(){ return JSON.parse(localStorage.getItem(KEY_PRODUCTS)||'[]'); }
-function setProducts(p){ localStorage.setItem(KEY_PRODUCTS, JSON.stringify(p)); window.dispatchEvent(new Event('storage')); }
+function uid(){ return 'u'+Date.now()+'_'+Math.floor(Math.random()*10000); }
+function readJSON(k, fallback){ try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback||null)) || (fallback||[]); } catch(e){ return fallback||[]; } }
+function writeJSON(k, v){ localStorage.setItem(k, JSON.stringify(v)); window.dispatchEvent(new Event('storage')); }
 
-async function readFilesAsBase64(files){
-  const arr = [];
-  for(const f of files){
-    const data = await new Promise(res=>{
-      const fr = new FileReader();
-      fr.onload = e => res(e.target.result);
-      fr.readAsDataURL(f);
-    });
-    arr.push(data);
-  }
-  return arr;
+/* ---- Admin check ---- */
+const admin = readJSON(KEY_ADMIN, null);
+if(!admin){ alert('Not logged in as admin'); location.href='Admin_login.html'; throw new Error('admin required'); }
+document.getElementById('adminNameBadge').textContent = admin.name || admin.email || 'Admin';
+
+/* ---- State ---- */
+let PRODUCTS = readJSON(KEY_PRODUCTS, []);
+let BUYERS = readJSON(KEY_BUYERS, []);
+let ORDERS = readJSON(KEY_ORDERS, []);
+// initialize if empty
+if(!Array.isArray(PRODUCTS)) PRODUCTS = [];
+if(!Array.isArray(BUYERS)) BUYERS = [];
+if(!Array.isArray(ORDERS)) ORDERS = [];
+
+/* ---- Helpers ---- */
+function syncState(){
+  PRODUCTS = readJSON(KEY_PRODUCTS, []);
+  BUYERS = readJSON(KEY_BUYERS, []);
+  ORDERS = readJSON(KEY_ORDERS, []);
+  renderAll();
 }
 
-async function saveProduct(){
-  const id = document.getElementById('pid').value;
-  const name = document.getElementById('pname').value.trim();
-  const price = Number(document.getElementById('pprice').value.trim());
-  const cat = document.getElementById('pcat').value.trim() || 'Misc';
-  const link = document.getElementById('plink').value.trim() || '#';
-  const url = document.getElementById('pimageurl').value.trim();
-  const files = document.getElementById('pfiles').files;
-  if(!name || !price){ alert('Name and price required'); return; }
-  let prods = getProducts();
-  let images = [];
-  if(url) images.push(url);
-  if(files && files.length){ const base64s = await readFilesAsBase64(files); images = images.concat(base64s); }
-  if(id){
-    const idx = prods.findIndex(p=>p.id==id);
-    if(idx>-1){
-      prods[idx] = { ...prods[idx], name, price, category:cat, link, images: images.length?images:prods[idx].images||[] };
-    }
-  } else {
-    prods.push({ id: Date.now(), name, price, category:cat, link, images: images.length?images:['https://via.placeholder.com/800x600?text='+encodeURIComponent(name)], created:new Date().toISOString() });
-  }
-  setProducts(prods);
-  clearForm();
-  renderProducts();
-  alert('Product saved');
+/* ---- Render functions ---- */
+function renderAll(){
+  renderTopCards();
+  renderProductsList();
+  renderBuyersList();
+  renderOrdersList();
+  renderSidebarStats();
+  renderRecentOrders();
+  updateCountsInHeader();
 }
 
-function renderProducts(){
-  const prods = getProducts();
-  const el = document.getElementById('productsList'); el.innerHTML = '';
-  if(!prods.length){ el.innerHTML = '<p class="small">No products yet</p>'; return; }
-  prods.slice().reverse().forEach(p=>{
-    const img = (p.images && p.images.length)?p.images[0]:'https://via.placeholder.com/160';
-    const box = document.createElement('div'); box.className='list-item';
-    box.innerHTML = `<img src="${img}" class="img-thumb"><div style="flex:1"><strong>${p.name}</strong><div class="small">₹${p.price} · ${p.category}</div></div>
+function renderTopCards(){
+  document.getElementById('cntProducts').textContent = PRODUCTS.length || 0;
+  document.getElementById('cntBuyers').textContent = BUYERS.length || 0;
+  document.getElementById('cntOrders').textContent = ORDERS.length || 0;
+}
+
+function renderProductsList(){
+  const out = document.getElementById('productsList');
+  out.innerHTML = '';
+  if(!PRODUCTS.length){ out.innerHTML = '<p class="kv">No products yet</p>'; document.getElementById('productCountInfo').textContent = ''; return; }
+  document.getElementById('productCountInfo').textContent = PRODUCTS.length + ' items';
+  PRODUCTS.slice().reverse().forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    const img = (p.images && p.images[0]) ? p.images[0] : ('https://via.placeholder.com/160?text='+encodeURIComponent(p.name));
+    div.innerHTML = `
+      <img src="${img}" class="img-thumb" alt="">
+      <div style="flex:1">
+        <strong>${p.name}</strong>
+        <div class="kv">₹${p.price} · ${p.category || 'Misc'} · stock: ${p.stock || 0}</div>
+        <div style="margin-top:6px"><span class="status-pill ${p.status==='active'?'status-active':''}">${(p.status||'active').toUpperCase()}</span> <span class="kv">id:${p.id}</span></div>
+      </div>
       <div class="controls">
-        <button onclick="editProduct(${p.id})">Edit</button>
-        <button onclick="deleteProduct(${p.id})" style="background:#b83d3d;color:#fff">Delete</button>
-      </div>`;
-    el.appendChild(box);
+        <button class="link-btn" onclick="editProduct('${p.id}')">Edit</button>
+        <button class="link-btn" onclick="toggleStatus('${p.id}')">${p.status==='active'?'Make Inactive':'Make Active'}</button>
+        <button class="link-btn" style="background:#b83d3d;color:#fff" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>
+    `;
+    out.appendChild(div);
   });
 }
 
+function renderBuyersList(){
+  const out = document.getElementById('buyersList');
+  out.innerHTML = '';
+  if(!BUYERS.length){ out.innerHTML = '<p class="kv">No buyers yet</p>'; return; }
+  BUYERS.slice().reverse().forEach(b=>{
+    const div = document.createElement('div');
+    div.style.padding = '10px'; div.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
+    div.innerHTML = `<strong>${b.name||'—'}</strong> <div class="kv">${b.email||'—'} · ${b.phone||'—'}</div>
+      <div style="margin-top:6px"><button class="link-btn" onclick="viewBuyer('${b.id}')">View</button> <button class="link-btn" onclick="toggleBlockBuyer('${b.id}')">${b.blocked? 'Unblock':'Block'}</button></div>`;
+    if(b.blocked) div.querySelector('strong').classList.add('blocked');
+    out.appendChild(div);
+  });
+}
+
+function renderOrdersList(){
+  const out = document.getElementById('ordersList');
+  out.innerHTML = '';
+  if(!ORDERS.length){ out.innerHTML = '<p class="kv">No orders yet</p>'; return; }
+  ORDERS.slice().reverse().forEach(o=>{
+    const div = document.createElement('div');
+    div.style.padding = '10px'; div.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
+    const when = new Date(o.date||o.created||Date.now()).toLocaleString();
+    div.innerHTML = `<strong>Order ${o.id || ('o'+(o._time||Date.now()))}</strong><div class="kv">${when}</div>
+      <div>Buyer: ${o.buyerName||o.name} · ${o.buyerEmail||o.email}</div>
+      <div>Items: ${(o.items||[]).map(i=>i.title||i.name).join(', ')}</div>
+      <div style="margin-top:6px"><button class="link-btn" onclick="viewOrder('${o.id}')">View</button></div>`;
+    out.appendChild(div);
+  });
+}
+
+/* Sidebar stats */
+function renderSidebarStats(){
+  const total = PRODUCTS.length;
+  const active = PRODUCTS.filter(p=>p.status!=='inactive').length;
+  const inactive = total - active;
+  document.getElementById('statProducts').textContent = total;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statInactive').textContent = inactive;
+  document.getElementById('statBuyers').textContent = BUYERS.length;
+  document.getElementById('statOrders').textContent = ORDERS.length;
+}
+
+function renderRecentOrders(){
+  const el = document.getElementById('recentOrders');
+  el.innerHTML = '';
+  const recent = ORDERS.slice().reverse().slice(0,6);
+  if(!recent.length) { el.innerHTML = '<p class="kv">No recent orders</p>'; return; }
+  recent.forEach(o=>{
+    const when = new Date(o.date||o.created||Date.now()).toLocaleString();
+    const d = document.createElement('div'); d.style.padding='8px'; d.style.borderBottom='1px solid rgba(255,255,255,0.02)';
+    d.innerHTML = `<div style="font-weight:700">${o.buyerName||o.name}</div><div class="kv">${when}</div><div class="kv">₹${o.total||o.amount||0}</div>`;
+    el.appendChild(d);
+  });
+}
+
+/* ---- CRUD: Products (localStorage-only) ---- */
+function saveProduct(){
+  const pid = document.getElementById('pid').value;
+  const name = document.getElementById('pname').value.trim();
+  const price = Number(document.getElementById('pprice').value);
+  const category = document.getElementById('pcat').value.trim() || 'Misc';
+  const link = document.getElementById('plink').value.trim() || '#';
+  const imageUrl = document.getElementById('pimageurl').value.trim();
+  const files = document.getElementById('pfiles').files;
+  const status = document.getElementById('pstatus').value || 'active';
+  const stock = Number(document.getElementById('pstock').value) || 0;
+
+  if(!name || Number.isNaN(price)){ return alert('Name and numeric price required'); }
+
+  const processAndSave = async ()=>{
+    let images = [];
+    if(imageUrl) images.push(imageUrl);
+    if(files && files.length){
+      const base64s = await Promise.all(Array.from(files).map(f=> new Promise(res=>{
+        const fr = new FileReader(); fr.onload = e=>res(e.target.result); fr.readAsDataURL(f);
+      })));
+      images = images.concat(base64s);
+    }
+    if(pid){
+      // update existing
+      const idx = PRODUCTS.findIndex(x=>x.id==pid);
+      if(idx>-1){
+        PRODUCTS[idx] = {...PRODUCTS[idx], name, price, category, link, images: images.length?images:PRODUCTS[idx].images||[], status, stock, updated: new Date().toISOString()};
+      } else {
+        // if not found - create new with given pid
+        PRODUCTS.push({ id: pid, name, price, category, link, images: images.length?images:[], status, stock, created:new Date().toISOString() });
+      }
+    } else {
+      const newid = String(Date.now()) + '_' + Math.floor(Math.random()*9999);
+      PRODUCTS.push({ id:newid, name, price, category, link, images: images.length?images:[('https://via.placeholder.com/800x600?text='+encodeURIComponent(name))], status, stock, created:new Date().toISOString() });
+    }
+    writeJSON(KEY_PRODUCTS, PRODUCTS);
+    clearForm();
+    alert('Product saved (local)');
+  };
+
+  processAndSave().catch(e=>{console.error(e); alert('Error saving product')});
+}
+
 function editProduct(id){
-  const p = getProducts().find(x=>x.id==id); if(!p) return;
+  const p = PRODUCTS.find(x=>x.id==id);
+  if(!p) return alert('Product not found');
   document.getElementById('pid').value = p.id;
   document.getElementById('pname').value = p.name;
   document.getElementById('pprice').value = p.price;
   document.getElementById('pcat').value = p.category;
   document.getElementById('plink').value = p.link || '';
   document.getElementById('pimageurl').value = (p.images && p.images[0]) || '';
+  document.getElementById('pstatus').value = p.status || 'active';
+  document.getElementById('pstock').value = p.stock || 0;
+  document.getElementById('formTitle').textContent = 'Edit Product';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function deleteProduct(id){ if(!confirm('Delete product?')) return; const prods = getProducts().filter(x=>x.id!=id); setProducts(prods); renderProducts(); }
+
+function deleteProduct(id){
+  if(!confirm('Delete product?')) return;
+  PRODUCTS = PRODUCTS.filter(x=>x.id!=id);
+  writeJSON(KEY_PRODUCTS, PRODUCTS);
+  renderAll();
+}
+
+function toggleStatus(id){
+  const idx = PRODUCTS.findIndex(x=>x.id==id);
+  if(idx===-1) return;
+  PRODUCTS[idx].status = (PRODUCTS[idx].status==='inactive') ? 'active' : 'inactive';
+  writeJSON(KEY_PRODUCTS, PRODUCTS);
+  renderAll();
+}
 
 function clearForm(){
-  document.getElementById('pid').value=''; document.getElementById('pname').value=''; document.getElementById('pprice').value=''; document.getElementById('pcat').value=''; document.getElementById('plink').value=''; document.getElementById('pimageurl').value=''; document.getElementById('pfiles').value='';
+  document.getElementById('pid').value='';
+  document.getElementById('pname').value='';
+  document.getElementById('pprice').value='';
+  document.getElementById('pcat').value='';
+  document.getElementById('plink').value='';
+  document.getElementById('pimageurl').value='';
+  document.getElementById('pfiles').value='';
+  document.getElementById('pstatus').value='active';
+  document.getElementById('pstock').value='100';
+  document.getElementById('formTitle').textContent = 'Add / Edit Product';
 }
 
-/* Buyers & Orders */
-function renderBuyers(){
-  const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS)||'[]');
-  const el = document.getElementById('buyersList');
-  if(!buyers.length){ el.innerHTML = '<p class="small">No buyers yet</p>'; return; }
-  el.innerHTML = buyers.slice().reverse().map(b=>`<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${b.name}</strong> <div class="small">${b.email} · ${b.phone||'—'}</div><div style="margin-top:6px"><button onclick="viewBuyer('${b.id}')">View</button></div></div>`).join('');
-}
+/* ---- Buyers ---- */
 function viewBuyer(id){
-  const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS)||'[]');
-  const b = buyers.find(x=>x.id===id);
+  const b = BUYERS.find(x=>x.id==id);
   if(!b) return alert('Buyer not found');
-  alert(`Buyer: ${b.name}\nEmail: ${b.email}\nPhone: ${b.phone}\nAddress: ${b.address||'—'}\nOrders: ${(b.orders||[]).length}\nReferral: ${b.ref || '—'}`);
+  alert(`Buyer: ${b.name}\nEmail: ${b.email || '—'}\nPhone: ${b.phone || '—'}\nAddress: ${b.address || '—'}\nOrders: ${(b.orders||[]).length || 0}\nBlocked: ${b.blocked? 'Yes' : 'No'}`);
 }
 
-function renderOrders(){
-  const orders = JSON.parse(localStorage.getItem(KEY_ORDERS)||'[]');
-  const el = document.getElementById('ordersList');
-  if(!orders.length){ el.innerHTML = '<p class="small">No orders yet</p>'; return; }
-  el.innerHTML = orders.slice().reverse().map(o=>`<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>Order ${o.id}</strong><div class="small">${new Date(o.date).toLocaleString()}</div><div>Items: ${o.items.map(i=>i.title).join(', ')}</div><div class="small">Buyer: ${o.buyerName} (${o.buyerEmail})</div></div>`).join('');
+function toggleBlockBuyer(id){
+  const idx = BUYERS.findIndex(x=>x.id==id);
+  if(idx===-1) return;
+  BUYERS[idx].blocked = !BUYERS[idx].blocked;
+  writeJSON(KEY_BUYERS, BUYERS);
+  renderAll();
 }
 
-/* profile, logout */
-function goProfile(){
-  const adm = JSON.parse(localStorage.getItem(KEY_ADMIN_CUR)||'null');
-  if(!adm) return alert('Not logged in'); 
-  const newName = prompt('Change display name', adm.name);
-  if(newName){ adm.name = newName; const admins = JSON.parse(localStorage.getItem('b3_admins')||'[]'); const idx = admins.findIndex(a=>a.id===adm.id); if(idx>-1){ admins[idx]=adm; localStorage.setItem('b3_admins', JSON.stringify(admins)); } localStorage.setItem(KEY_ADMIN_CUR, JSON.stringify(adm)); alert('Saved'); }
+/* ---- Orders ---- */
+function viewOrder(id){
+  const o = ORDERS.find(x=>x.id==id);
+  if(!o) return alert('Order not found');
+  const items = (o.items || []).map(i=>`${i.title || i.name} x ${i.qty || 1} — ₹${i.price || i.amount || 0}`).join('\n');
+  alert(`Order ${o.id}\nBuyer: ${o.buyerName || o.name}\nEmail: ${o.buyerEmail || o.email}\nPhone: ${o.phone || '—'}\nAddress: ${o.address || '—'}\n\nItems:\n${items}\n\nTotal: ₹${o.total || o.amount || 0}`);
 }
-function logout(){ localStorage.removeItem(KEY_ADMIN_CUR); alert('Logged out'); location.href='Admin_login.html'; }
-function gotoBuyer(){ window.open('buyer.html','_self'); }
 
-/* storage listener */
-window.addEventListener('storage', e => {
-  if(e.key === KEY_PRODUCTS) renderProducts();
-  if(e.key === KEY_BUYERS) renderBuyers();
-  if(e.key === KEY_ORDERS) renderOrders();
+/* ---- Export / Import / Clear ---- */
+function exportData(){
+  const data = { products: PRODUCTS, buyers: BUYERS, orders: ORDERS };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'b3lams_export_'+Date.now()+'.json'; a.click(); URL.revokeObjectURL(url);
+}
+function importPrompt(){
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json';
+  inp.onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try{
+        const j = JSON.parse(fr.result);
+        if(j.products) PRODUCTS = j.products;
+        if(j.buyers) BUYERS = j.buyers;
+        if(j.orders) ORDERS = j.orders;
+        writeJSON(KEY_PRODUCTS, PRODUCTS); writeJSON(KEY_BUYERS, BUYERS); writeJSON(KEY_ORDERS, ORDERS);
+        alert('Imported');
+      } catch(err){ alert('Invalid file'); }
+    };
+    fr.readAsText(f);
+  };
+  inp.click();
+}
+function clearAllData(){
+  if(!confirm('This will remove PRODUCTS, BUYERS, ORDERS from localStorage. Continue?')) return;
+  localStorage.removeItem(KEY_PRODUCTS); localStorage.removeItem(KEY_BUYERS); localStorage.removeItem(KEY_ORDERS);
+  PRODUCTS = []; BUYERS = []; ORDERS = [];
+  window.dispatchEvent(new Event('storage'));
+  renderAll();
+}
+
+/* ---- Tabs (A/B/C combined) ---- */
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name)?.classList.add('active');
+  // hide all sections
+  document.getElementById('section-products').style.display = 'none';
+  document.getElementById('section-products-list').style.display = 'none';
+  document.getElementById('section-buyers').style.display = 'none';
+  document.getElementById('section-orders').style.display = 'none';
+  document.getElementById('topCards').style.display = 'flex';
+  if(name==='products'){
+    document.getElementById('section-products').style.display = 'block';
+    document.getElementById('section-products-list').style.display = 'block';
+  } else if(name==='buyers'){
+    document.getElementById('section-buyers').style.display = 'block';
+    document.getElementById('topCards').style.display = 'flex';
+  } else if(name==='orders'){
+    document.getElementById('section-orders').style.display = 'block';
+  } else if(name==='dashboard'){
+    // Dashboard page: show cards and also buyers & orders summary
+    document.getElementById('section-products-list').style.display = 'block';
+    document.getElementById('section-buyers').style.display = 'block';
+    document.getElementById('section-orders').style.display = 'block';
+  }
+  // adjust tabs active visually
+  document.querySelectorAll('.tab').forEach(t=>{ if(t.id==='tab-'+name) t.classList.add('active'); else t.classList.remove('active'); });
+}
+
+/* ---- counts/update helpers ---- */
+function updateCountsInHeader(){
+  document.getElementById('cntProducts').textContent = PRODUCTS.length;
+  document.getElementById('cntBuyers').textContent = BUYERS.length;
+  document.getElementById('cntOrders').textContent = ORDERS.length;
+}
+
+/* ---- init render ---- */
+renderAll();
+
+/* ---- listen to storage events from other tabs (buyer) to auto-refresh ---- */
+window.addEventListener('storage', (e)=>{
+  // if buyer/other tab updated keys, refresh
+  if([KEY_PRODUCTS, KEY_BUYERS, KEY_ORDERS].includes(e.key) || e.key===null){
+    PRODUCTS = readJSON(KEY_PRODUCTS, []);
+    BUYERS = readJSON(KEY_BUYERS, []);
+    ORDERS = readJSON(KEY_ORDERS, []);
+    renderAll();
+  }
 });
+
+/* ---- Buyer-to-admin integration notes ----
+   - Buyer app should write to KEY_BUYERS and KEY_ORDERS localStorage (same keys) when users signup / place orders.
+   - Example buyer order structure pushed into KEY_ORDERS:
+     {
+       id: 'o123...',
+       date: new Date().toISOString(),
+       buyerId: 'b123',
+       buyerName: 'Sai',
+       buyerEmail: 'a@b.com',
+       phone: '1234567890',
+       address: '...'
+       items: [{ title:'Product', qty:1, price: 1999 }, ...],
+       total: 2999
+     }
+   - Buyer should also add buyer record to KEY_BUYERS with id matching buyerId:
+     { id:'b123', name:'Sai', email:'a@b.com', phone:'...' }
+   - When buyer pushes to localStorage, this Admin panel (open in another tab) auto-updates via storage event.
+*/
+
+/* ---- helper nav / session ---- */
+function gotoBuyer(){ window.open('buyer.html','_self'); }
+function logout(){ localStorage.removeItem(KEY_ADMIN); alert('Logged out'); location.href='Admin_login.html'; }
+
+/* make functions available on window for inline onclick usage */
+window.saveProduct = saveProduct;
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+window.toggleStatus = toggleStatus;
+window.clearForm = clearForm;
+window.viewBuyer = viewBuyer;
+window.toggleBlockBuyer = toggleBlockBuyer;
+window.viewOrder = viewOrder;
+window.exportData = exportData;
+window.importPrompt = importPrompt;
+window.clearAllData = clearAllData;
+window.showTab = showTab;
+
+/* Ensure UI reflects any initial changes */
+renderAll();
 </script>
 </body>
 </html>
-
