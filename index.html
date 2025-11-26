@@ -727,9 +727,17 @@ window.resetFilters = resetFilters;
 
 /* Finish: ensure initial render */
 renderAll();
+
+  if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/ADMINB3L-MSAPP/service-worker.js")
+    .then(() => console.log("Service Worker Registered"))
+    .catch((err) => console.log("SW Failed", err));
+}
+
 </script>
 </body>
 </html>
+
 
 
 
