@@ -1,15 +1,14 @@
 {
-  "name": "My Web App",
-  "short_name": "MyApp",
-  "description": "This is a PWA web application.",
-  "id": "./",
+  "name": "B3LAMS Admin",
+  "short_name": "Admin",
   "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
-  "theme_color": "#000000",
   "background_color": "#ffffff",
-  "orientation": "portrait",
+  "theme_color": "#000000",
 
   "icons": [
+    
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
@@ -17,4 +16,3 @@
     }
   ]
 }
-
