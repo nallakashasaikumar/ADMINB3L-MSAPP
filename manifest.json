@@ -1,20 +1,20 @@
 {
-  "name": "B3LAMS Admin",
-  "short_name": "Admin",
+  "name": "B3L Admin",
+  "short_name": "B3L Admin",
+  "description": "Admin panel for the B3L eCommerce system.",
+  
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
+
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#0f0f12",
 
   "icons": [
+    
     {
-      "src": "icons/icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
