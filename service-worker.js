@@ -5,7 +5,8 @@ self.addEventListener("install", (event) => {
         "./",
         "./index.html",
         "./manifest.json",
-        "./icons/icon.png"
+        "./icons/icon.png",
+        "./screenshot/screen1.png"
       ]);
     })
   );
