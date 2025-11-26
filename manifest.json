@@ -19,21 +19,4 @@
       "type": "image/png"
     }
   ]
-
-    "screenshot": [
-    {
-      "src": "screenshot/screen1.png",
-      "sizes": "1024x1536",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile UI Home Screen"
-    },
-    {
-      "src": "screenshot/screen1.png",
-      "sizes": "1024x1536",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop UI Homepage"
-    }
-  ],
 }
