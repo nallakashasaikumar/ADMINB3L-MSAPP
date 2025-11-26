@@ -393,7 +393,7 @@ function renderProductsList(){
 }
 
 /* BUYERS */
-/*function renderBuyersList(){
+function renderBuyersList(){
   const out = document.getElementById('buyersList');
   out.innerHTML = '';
   if(!BUYERS.length){ out.innerHTML = '<p class="kv">No buyers yet</p>'; return; }
@@ -405,54 +405,7 @@ function renderProductsList(){
     if(b.blocked) div.querySelector('strong').classList.add('blocked');
     out.appendChild(div);
   });
-}*/
-
-//   function renderBuyers(){
-//   const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS) || "[]");
-//   const el = document.getElementById("buyersList");
-
-//   if(!buyers.length){
-//     el.innerHTML = `<p class="small">No buyers yet</p>`;
-//     return;
-//   }
-
-//   el.innerHTML = buyers.slice().reverse().map(b => `
-//     <div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.05)">
-//       <strong>${b.name}</strong>
-//       <div class="small">${b.email} · ${b.phone || '—'}</div>
-//       <div class="small">Last login: ${b.lastLogin ? new Date(b.lastLogin).toLocaleString() : '—'}</div>
-//       <button onclick="viewBuyer('${b.id}')">View Details</button>
-//     </div>
-//   `).join("");
-// }
-  /* ----- Buyers: renderBuyersList (replace any conflicting buyer render function) ----- */
-function renderBuyersList(){
-  const buyers = readJSON(KEY_BUYERS, []);
-  const el = document.getElementById('buyersList');
-  el.innerHTML = '';
-  if(!buyers.length){
-    el.innerHTML = '<p class="kv">No buyers yet</p>';
-    return;
-  }
-  buyers.slice().reverse().forEach(b=>{
-    const last = b.lastLogin ? new Date(b.lastLogin).toLocaleString() : '—';
-    const wrapper = document.createElement('div');
-    wrapper.style.padding = '10px';
-    wrapper.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
-    wrapper.innerHTML = `
-      <strong>${escapeHtml(b.name || '—')}</strong>
-      <div class="kv">${escapeHtml(b.email || '—')} · ${escapeHtml(b.phone || '—')}</div>
-      <div class="kv">Last login: ${last}</div>
-      <div style="margin-top:6px">
-        <button class="link-btn" onclick="viewBuyer('${b.id}')">View Details</button>
-        <button class="link-btn" onclick="toggleBlockBuyer('${b.id}')">${b.blocked? 'Unblock':'Block'}</button>
-      </div>
-    `;
-    if(b.blocked) wrapper.querySelector('strong').classList.add('blocked');
-    el.appendChild(wrapper);
-  });
 }
-
 
 /* ORDERS */
 function renderOrdersList(){
@@ -591,41 +544,9 @@ function clearForm(){
 }
 
 /* ---- Buyers ---- */
-//   function viewBuyer(id){
-//   const buyers = JSON.parse(localStorage.getItem(KEY_BUYERS) || "[]");
-//   const b = buyers.find(x => x.id === id);
-//   if(!b) return alert("Buyer not found");
-
-//   alert(
-//     `Name: ${b.name}\nEmail: ${b.email}\nPhone: ${b.phone}\nAddress: ${b.address || "—"}\nLast Login: ${b.lastLogin ? new Date(b.lastLogin).toLocaleString() : "—"}`
-//   );
-// }
-  /* ----- viewBuyer: shows full buyer info + their orders ----- */
-function viewBuyer(id){
-  const buyers = readJSON(KEY_BUYERS, []);
-  const b = buyers.find(x => x.id === id);
-  if(!b) return showToast('Buyer not found');
-
-  // gather orders for this buyer (matching by buyerId or buyerEmail)
-  const orders = (readJSON(KEY_ORDERS, []) || []).filter(o =>
-    (o.buyerId && o.buyerId === b.id) || (o.buyerEmail && b.email && o.buyerEmail === b.email)
-  );
-
-  let html = `<div style="padding:12px;max-width:540px"><h3>${escapeHtml(b.name || '—')}</h3>`;
-  html += `<p><strong>Email:</strong> ${escapeHtml(b.email || '—')}<br><strong>Phone:</strong> ${escapeHtml(b.phone || '—')}<br><strong>Address:</strong> ${escapeHtml(b.address || '—')}</p>`;
-  html += `<p><strong>Referral:</strong> ${escapeHtml(b.ref || '—')}<br><strong>Blocked:</strong> ${b.blocked? 'Yes' : 'No'}</p>`;
-  html += `<h4>Orders (${orders.length})</h4><ul>`;
-  orders.forEach(o => {
-    html += `<li>Order ${escapeHtml(String(o.id))} — ₹${Number(o.total||0)} — ${new Date(o.date||o.created||Date.now()).toLocaleString()}</li>`;
-  });
-  html += `</ul></div>`;
-  showModal(html);
-}
-
-
-// function viewBuyer(id){
-//   const b = BUYERS.find(x=>x.id==id);
-//   if(!b) return showToast('Buyer not found');
+ function viewBuyer(id){
+   const b = BUYERS.find(x=>x.id==id);
+   if(!b) return showToast('Buyer not found');
   // gather orders for this buyer
   const orders = ORDERS.filter(o => (o.buyerId && o.buyerId === b.id) || (o.buyerEmail && b.email && o.buyerEmail === b.email));
   let html = `<div style="padding:12px;max-width:540px"><h3>${b.name || '—'}</h3>`;
@@ -780,7 +701,7 @@ window.addEventListener('storage', (e)=>{
 /* ---- helper nav / session ---- */
 /*function gotoBuyer(){ window.open('buyer.html','_self'); }*/
 
- /* function gotoBuyer(){ window.location.href = "buyer_home.html"; } */
+  function gotoBuyer(){ window.location.href = "buyer_home.html"; } 
 
 function logout(){ localStorage.removeItem(KEY_ADMIN); showToast('Logged out'); location.href='Admin_login.html'; }
 
@@ -805,5 +726,6 @@ renderAll();
 </script>
 </body>
 </html>
+
 
 
