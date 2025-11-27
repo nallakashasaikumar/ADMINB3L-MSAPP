@@ -582,7 +582,9 @@ function gotoBuyer(){
   const buyerUrl = 'https://nallakashasaikumar.github.io/B3L-MSAPP/';
   window.open(buyerUrl, '_blank');
 }
-function logout(){ localStorage.removeItem(KEY_ADMIN); showToast('Logged out'); setTimeout(()=> location.reload(), 400); }
+
+function logout(){ localStorage.removeItem(KEY_ADMIN); showToast('Logged out'); location.href='Admin_login.html'; }
+
 
 /* ---- storage listener to refresh when buyer changes data in another tab/device ---- */
 window.addEventListener('storage', (e)=>{
@@ -621,3 +623,4 @@ renderAll();
 </script>
 </body>
 </html>
+
