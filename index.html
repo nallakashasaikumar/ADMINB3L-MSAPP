@@ -6,7 +6,7 @@
 <title>B3LAMS — Admin Dashboard (Frontend Only)</title>
   <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
-  <link rel="icon" type="image/png" href="icons/icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-512.png">
 
 <style>
 :root{
@@ -624,8 +624,14 @@ window.resetFilters = resetFilters;
 // final render
 ensureAdmin();
 renderAll();
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+
 </script>
 </body>
 </html>
+
 
 
